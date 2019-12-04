@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,8 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
-    <script src="sbox.js"></script>
+    <!-- <script src="sbox.js"></script> -->
 </head>
+
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <a class="navbar-brand text-light">S-Box Generator</a>
@@ -19,7 +21,8 @@
             <div class="col-md-4"></div>
             <div class="col-md-4">
                 <label>Polynomial : </label>
-                <input id="polynomial" type="text" class="form-control" value="1 + x + x**3 + x**4 + x**8" placeholder="1 + x + x**3 + x**4 + x**8">
+                <input id="polynomial" type="text" class="form-control" value="1 + x + x**3 + x**4 + x**8"
+                    placeholder="1 + x + x**3 + x**4 + x**8">
                 <br>
                 <button id="btn-generate" class="btn btn-outline-primary btn-block">Generate</button>
             </div>
@@ -32,12 +35,14 @@
                 <table id="table-sbox">
 
                 </table>
+                <div id="exec-sbox" class="text-center"></div>
             </div>
             <div class="col-md-6">
                 <h4>Inverse S-Box</h4>
                 <table id="table-inv-sbox">
 
                 </table>
+                <div id="exec-inv-sbox" class="text-center"></div>
             </div>
         </div>
     </div>
@@ -46,28 +51,28 @@
     <script src="js/sbox.js"></script>
     <script>
 
-        function generateTable(){
+        function generateTable() {
             let html = "";
             let index = 0;
-            for(let i=0; i <= 16; i++){
+            for (let i = 0; i <= 16; i++) {
                 html += "<tr>";
-                if(i == 0){
-                    for(let j=0; j <= 16; j++){
-                        if(j == 0){
+                if (i == 0) {
+                    for (let j = 0; j <= 16; j++) {
+                        if (j == 0) {
                             html += `<th></th>`;
                         } else {
-                            html += `<th>${(j-1).toString(16)}</th>`;
+                            html += `<th>${(j - 1).toString(16)}</th>`;
                         }
                     }
                 } else {
-                    for(let j=0; j <= 16; j++){
-                        if(j == 0){
-                            html += `<th>${(i-1).toString(16)}</th>`;
+                    for (let j = 0; j <= 16; j++) {
+                        if (j == 0) {
+                            html += `<th>${(i - 1).toString(16)}</th>`;
                         } else {
                             html += `<td data-index="${index}">0</td>`;
                             index++;
                         }
-                        
+
                     }
                 }
                 html += "</tr>";
@@ -77,19 +82,28 @@
             $("#table-inv-sbox").html(html);
         }
 
-        $(document).ready(function(){
-            
-            $("#btn-generate").click(function(){
+        $(document).ready(function () {
+
+            $("#btn-generate").click(function () {
+                var t0 = performance.now();
                 let sbox = generate($("#polynomial").val());
+                var t1 = performance.now();
                 let inv_sbox = inverse(sbox);
+                var t2 = performance.now();
+                let execsbox = ("Kecepatan eksekusi sbox " + (t1 - t0) + " milliseconds.");
+                let execinvsbox = ("Kecepatan eksekusi inverse sbox " + (t2 - t1) + " milliseconds.");
+                $("#exec-sbox").html(execsbox);
+                $("#exec-inv-sbox").html(execinvsbox);
                 generateTable();
-                
-                for(let i=0; i < 256; i++){
+
+                for (let i = 0; i < 256; i++) {
                     $(`#table-sbox td[data-index=${i}]`).text(sbox[i].toString(16).padStart(2, '0'));
                     $(`#table-inv-sbox td[data-index=${i}]`).text(inv_sbox[i].toString(16).padStart(2, '0'));
                 }
+
             });
         })
     </script>
 </body>
+
 </html>
